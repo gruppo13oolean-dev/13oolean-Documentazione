@@ -3,7 +3,7 @@
 Repository GitHub del gruppo 13 "13oolean" per il progetto di Ingegneria del Software 2026-2027
 
 ## Contenuti
-'''
+
 13oolean-Documentazione/
 ├──documentazione/
 |  ├──esterna/
@@ -12,7 +12,7 @@ Repository GitHub del gruppo 13 "13oolean" per il progetto di Ingegneria del Sof
 ├──sito_web/
 ├──src/
 └──README.md
-'''
+
 
 ## Componenti del gruppo
 | Nome      | Cognome |Matricola |
