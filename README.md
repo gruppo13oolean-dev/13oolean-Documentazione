@@ -4,7 +4,7 @@ Repository GitHub del gruppo 13 "13oolean" per il progetto di Ingegneria del Sof
 
 ## Contenuti
 
-13oolean-Documentazione/
+13oolean-Documentazione/  
 ├──documentazione/  
 |  ├──esterna/  
 |  ├──interna/  
