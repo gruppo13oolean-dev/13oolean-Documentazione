@@ -20,7 +20,7 @@ jobs:
       - name: Installa ambiente TeX Live
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk
+          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-lang-italian latexmk
 
       - name: Compilazione e smistamento verbali
         run: |
