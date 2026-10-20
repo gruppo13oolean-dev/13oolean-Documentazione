@@ -1,0 +1,54 @@
+name: Compilazione Verbali LaTeX
+
+on:
+  push:
+    paths:
+      - 'src/Verbali/**'
+  pull_request:
+    paths:
+      - 'src/Verbali/**'
+  workflow_dispatch:
+
+jobs:
+  build-verbali:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Installa ambiente TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk
+
+      - name: Prepara cartella output
+        run: mkdir -p output
+
+      - name: Compilazione ricorsiva dei verbali
+        run: |
+          # Cerca tutti i file .tex dentro "src/Verbali"
+          find "src/Verbali" -type f -name "*.tex" | while read -r tex_file; do
+            dir=$(dirname "$tex_file")
+            file=$(basename "$tex_file")
+            echo "Compilazione di: $tex_file"
+            
+            # Entra nella cartella del verbale per risolvere percorsi relativi e asset
+            (
+              cd "$dir"
+              latexmk -pdf -interaction=nonstopmode "$file"
+            )
+            
+            # Copia il PDF compilato nella cartella output alla radice
+            pdf_name="${file%.tex}.pdf"
+            if [ -f "$dir/$pdf_name" ]; then
+              cp "$dir/$pdf_name" output/
+            fi
+          done
+
+      - name: Carica tutti i PDF generati
+        uses: actions/upload-artifact@v4
+        with:
+          name: Verbali-PDF
+          path: output/*.pdf
+          retention-days: 30
