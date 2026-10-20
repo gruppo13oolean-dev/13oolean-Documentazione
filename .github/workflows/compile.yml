@@ -63,7 +63,7 @@ jobs:
 
           # Esegue il commit solo se ci sono effettive modifiche ai PDF
           if ! git diff --staged --quiet; then
-            git commit -m "docs: aggiornamento automatico PDF compilati [skip ci]"
+            git commit -m "Automated update from GitHub Actions"
             git pull --rebase origin main
             git push origin main
           else
