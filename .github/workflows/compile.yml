@@ -22,33 +22,42 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk
 
-      - name: Prepara cartella output
-        run: mkdir -p output
-
-      - name: Compilazione ricorsiva dei verbali
+      - name: Compilazione e smistamento verbali
         run: |
-          # Cerca tutti i file .tex dentro "src/Verbali"
+          # Trova tutti i file .tex dentro src/Verbali
           find "src/Verbali" -type f -name "*.tex" | while read -r tex_file; do
             dir=$(dirname "$tex_file")
             file=$(basename "$tex_file")
             echo "Compilazione di: $tex_file"
             
-            # Entra nella cartella del verbale per risolvere percorsi relativi e asset
+            # Compila all'interno della cartella sorgente per risolvere riferimenti e asset
             (
               cd "$dir"
               latexmk -pdf -interaction=nonstopmode "$file"
             )
             
-            # Copia il PDF compilato nella cartella output alla radice
             pdf_name="${file%.tex}.pdf"
             if [ -f "$dir/$pdf_name" ]; then
-              cp "$dir/$pdf_name" output/
+              # Se il file si trova in "src/Verbali/Verbali interni/..."
+              # la cartella di destinazione diventa "output/Verbali/Verbali interni"
+              if [[ "$dir" == *"Verbali interni"* ]]; then
+                target_dir="output/Verbali/Verbali interni"
+              elif [[ "$dir" == *"Verbali esterni"* ]]; then
+                target_dir="output/Verbali/Verbali esterni"
+              else
+                target_dir="output/Verbali"
+              fi
+              
+              # Crea la sottocartella se non esiste e copia il file PDF
+              mkdir -p "$target_dir"
+              cp "$dir/$pdf_name" "$target_dir/"
+              echo "PDF copiato in: $target_dir/$pdf_name"
             fi
           done
 
-      - name: Carica tutti i PDF generati
+      - name: Carica l'intera cartella output come Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Verbali-PDF
-          path: output/*.pdf
+          name: Verbali-Output
+          path: output/
           retention-days: 30
